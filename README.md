@@ -1,23 +1,40 @@
-# Alunos: Bruno Oliveira Costa
-#         Gabriel Nogueira Morais
-  
-O sistema desenvolvido para o trabalho consiste em uma aplicação para controle de estoque e vendas de uma forma simplificada.
-O sistema possui funções para cadastro de produtos, controle de estoque, venda e pagamento.
-   
-Algumas das regras de negócio:
+# STOCK TRACKR
 
-Não pode ter estoque negativo
-Não pode vender um produto com estoque igual a 0
-Não pode vender um número maior de unidades do que o disponível em estoque
-Ao realizar uma venda deve ser removido as unidades do estoque
-Caso a venda seja cancelada os produtos devem retornar ao estoque
-Não pode ter mais de um produto cadastrado com o mesmo código 
-O preço ao comprar deve ser correspondentes a quantidade de itens no carrinho
-O valor a vista é 10% menor que o valor a prazo
-Só pode vender um produto com o status “A VENDA”
-Todo produto deve ter uma categoria cadastrada
-Todo produto deve ter um preço
-O produto pode ter uma descrição 
-Não pode se cadastrar um produto caso falte alguma característica fundamental (categoria ou preço)
+![CI Workflow](https://github.com/BrnCosta/stock-trackr/actions/workflows/ci.yml/badge.svg)
 
-Foi utilizada a linguagem JAVA e o framework JUNIT para desevolvimento dos testes.
+## O que é?
+Um sistema, desenvolvido para o trabalho da matéria de Testes de Software, que consiste em uma aplicação para controle de estoque e vendas de uma forma simplificada.
+
+Funcionalidades:
+- Cadastro de produtos:
+
+        - Nome do Produto
+
+        - Descrição
+
+        - Preço de venda
+
+        - Taxa de venda
+
+        - Quantidade dos produtos
+
+- Lançamento das vendas
+- Visualização do estoque atual
+- Pesquisa por nome
+
+
+## Alunos: 
+### - Bruno Oliveira Costa / 2018106346
+### - Gabriel Nogueira Morais /
+
+## Tecnologias utilizadas
+
+### Backend
+
+![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white) ![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
+
+### Frontend
+
+![Angular](https://img.shields.io/badge/angular-%23DD0031.svg?style=for-the-badge&logo=angular&logoColor=white) ![Jasmine](https://img.shields.io/badge/-Jasmine-%238A4182?style=for-the-badge&logo=Jasmine&logoColor=white)
+
+
