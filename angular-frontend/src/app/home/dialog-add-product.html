@@ -1,35 +1,42 @@
-<h1 mat-dialog-title>New product</h1>
+<h1 mat-dialog-title id="dialogTitle">New product</h1>
 <div mat-dialog-content class="form-class">
-    <mat-form-field>
-        <mat-label>Name</mat-label>
-        <input matInput>
-    </mat-form-field>
-    <mat-form-field>
-        <mat-label>Description</mat-label>
-        <input matInput>
-    </mat-form-field>
-    <div>
-        <mat-form-field floatLabel="always">
-            <mat-label>Price</mat-label>
-            <input matInput type="number" class="example-right-align" placeholder="0">
-            <span matTextPrefix>$&nbsp;</span>
-            <span matTextSuffix>.00</span>
+    <form [formGroup]="productForm" (ngSubmit)="onSubmit()"> 
+        <mat-form-field style="width: 100%;">
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name">
+            <mat-error *ngIf="productForm.controls['name'].hasError('required')">Name is required</mat-error>
         </mat-form-field>
-        <mat-form-field floatLabel="always">
-            <mat-label>Tax</mat-label>
-            <input matInput type="number" class="example-right-align" placeholder="0">
-            <span matTextPrefix>$&nbsp;</span>
-            <span matTextSuffix>.00</span>
+        <mat-form-field style="width: 100%;">
+            <mat-label>Description</mat-label>
+            <input matInput formControlName="description">
         </mat-form-field>
-        <mat-form-field>
-            <mat-label>Quantity</mat-label>
-            <input matInput type="number">
-        </mat-form-field>
-    </div>
-</div>
-<div mat-dialog-actions align="end">
-    <button mat-button mat-raised-button color="basic" (click)="onNoClick()">Cancel</button>
-    <button mat-button mat-raised-button color="primary" [mat-dialog-close]="data.name" cdkFocusInitial>Save</button>
+        <div>
+            <mat-form-field floatLabel="always">
+                <mat-label>Price</mat-label>
+                <input matInput type="number" class="example-right-align" formControlName="price" placeholder="Ex. 10.99">
+                <mat-error *ngIf="productForm.controls['price'].hasError('required')">Price is required</mat-error>
+                <mat-error *ngIf="productForm.controls['price'].hasError('min')">Price cannot be zero/negative</mat-error>
+                <span matTextPrefix>$&nbsp;</span>
+            </mat-form-field>
+            <mat-form-field floatLabel="always">
+                <mat-label>Tax</mat-label>
+                <input matInput type="number" class="example-right-align" formControlName="tax" placeholder="Ex. 0.01 (1%)">
+                <mat-error *ngIf="productForm.controls['tax'].hasError('required')">Tax is required</mat-error>
+                <mat-error *ngIf="productForm.controls['tax'].hasError('min')">Tax cannot be negative</mat-error>
+                <span matTextPrefix>$&nbsp;</span>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Quantity</mat-label>
+                <input matInput type="number" formControlName="quantity">
+                <mat-error *ngIf="productForm.controls['quantity'].hasError('required')">Quantity is required</mat-error>
+                <mat-error *ngIf="productForm.controls['quantity'].hasError('min')">Quantity cannot be negative</mat-error>
+            </mat-form-field>
+        </div>
+        <div mat-dialog-actions align="end">
+            <button id="cancelBtn" mat-button mat-raised-button color="basic" (click)="onNoClick()">Cancel</button>
+            <button id="saveBtn" mat-button mat-raised-button color="primary" type="submit" [disabled]="!productForm.valid">Save</button>
+        </div>
+    </form>
 </div>
 
 <style>
@@ -49,9 +56,5 @@
     input.example-right-align::-webkit-outer-spin-button,
     input.example-right-align::-webkit-inner-spin-button {
         display: none;
-    }
-
-    input.example-right-align {
-        -moz-appearance: textfield;
     }
 </style>

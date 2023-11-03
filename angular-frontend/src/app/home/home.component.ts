@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, Inject } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { StockService } from './stock.service';
 
 export interface Product {
@@ -41,7 +41,7 @@ export class HomeComponent implements OnInit {
   }
 
   displayedColumns: string[] = ['name', 'description', 'price', 'tax', 'quantity'];
-  products: Product[] = STOCK_DATA;
+  products: Product[] = [];
   searchText = "";
 
   getAllStockProducts() {
@@ -51,19 +51,29 @@ export class HomeComponent implements OnInit {
   }
 
   openDialog(): void {
-    const dialogRef = this.dialog.open(DialogAddProduct, {
-      data: { name: "teste", animal: "teste" },
-    });
+    console.log('openDialog called');
+    const dialogRef = this.dialog.open(DialogAddProduct);
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
+      if(result == undefined)
+        return;
+      
+      this.stockService.addProduct(result)
+        .subscribe({
+          next: (product: Product) => {
+            console.log('Successfully added product: ' + product.name);
+            this.products = [...this.products, product];
+          },
+          error: (e: Error) => console.error('Error adding product: ' + e)
+        })
     });
   }
 }
 
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { MatDialogRef, MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule, FormGroup, Validators } from '@angular/forms';
+import { NgIf } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
@@ -71,15 +81,26 @@ import { MatFormFieldModule } from '@angular/material/form-field';
   selector: 'dialog-add-product',
   templateUrl: 'dialog-add-product.html',
   standalone: true,
-  imports: [MatDialogModule, MatFormFieldModule, MatInputModule, FormsModule, MatButtonModule],
+  imports: [MatDialogModule, MatFormFieldModule, MatInputModule, FormsModule, MatButtonModule, ReactiveFormsModule, NgIf],
 })
 export class DialogAddProduct {
   constructor(
-    public dialogRef: MatDialogRef<DialogAddProduct>,
-    @Inject(MAT_DIALOG_DATA) public data: Product,
+    public dialogRef: MatDialogRef<DialogAddProduct>
   ) { }
 
   onNoClick(): void {
     this.dialogRef.close();
+  }
+
+  productForm = new FormGroup({
+    name: new FormControl('', Validators.required),
+    description: new FormControl(''),
+    price: new FormControl('', [Validators.required, Validators.min(1)]),
+    tax: new FormControl('', [Validators.required, Validators.min(0)]),
+    quantity: new FormControl(0, [Validators.required, Validators.min(0)])
+  });
+
+  onSubmit() {
+    this.dialogRef.close(this.productForm.value);
   }
 }
