@@ -25,7 +25,7 @@ Funcionalidades:
 
 ## Alunos: 
 ### - Bruno Oliveira Costa / 2018106346
-### - Gabriel Nogueira Morais /
+### - Gabriel Nogueira Morais / 2018106354
 
 ## Tecnologias utilizadas
 
