@@ -17,6 +17,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { MatCardModule } from '@angular/material/card';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { Product } from '../interfaces/Product';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 describe('HomeComponent', () => {
   let component: HomeComponent;
@@ -38,6 +39,7 @@ describe('HomeComponent', () => {
       providers: [
         { provide: StockService, useValue: stockService },
         MatDialog,
+        MatSnackBar
       ]
     });
     fixture = TestBed.createComponent(HomeComponent);
