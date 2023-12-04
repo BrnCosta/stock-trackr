@@ -6,7 +6,7 @@
                 <mat-label>
                     <mat-icon>search</mat-icon> Search
                 </mat-label>
-                <input type="text" matInput placeholder="Ex. Milk" [(ngModel)]="searchText" (keyup)="applyFilter()">
+                <input id="search-input" type="text" matInput placeholder="Ex. Milk" [(ngModel)]="searchText" (keyup)="applyFilter()">
                 <button *ngIf="searchText" matSuffix mat-icon-button (click)="resetSearch()">
                     <mat-icon>close</mat-icon>
                 </button>
@@ -25,7 +25,7 @@
         <!-- Checkbox Column -->
         <ng-container matColumnDef="select">
             <th mat-header-cell *matHeaderCellDef>
-                <mat-checkbox (change)="$event ? toggleAllRows() : null"
+                <mat-checkbox id="check-header" (change)="$event ? toggleAllRows() : null"
                     [checked]="selection.hasValue() && isAllSelected()"
                     [indeterminate]="selection.hasValue() && !isAllSelected()" [aria-label]="checkboxLabel()">
                 </mat-checkbox>

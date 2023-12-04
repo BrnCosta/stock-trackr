@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { of } from 'rxjs';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, By } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgIf } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
@@ -170,6 +170,122 @@ describe('HomeComponent', () => {
     });
 
     flush();
+  }));
+
+  it('should call all toggleAllRows when checkbox clicked', fakeAsync(() => {
+    const spyToggleAllRows = spyOn(fixture.componentInstance, 'toggleAllRows');
+
+    stockService.getAllStockProducts.and.returnValue(of([]));
+
+    fixture.detectChanges();
+
+    let checkboxHeader = fixture.debugElement.nativeElement.querySelector('#check-header');
+    expect(checkboxHeader.checked).toBeFalsy();
+
+    checkboxHeader.dispatchEvent(new Event('change'));
+
+    tick();
+
+    expect(spyToggleAllRows).toHaveBeenCalledTimes(1);
+  }));
+
+  it('should show alert if no product selected', fakeAsync(() => {    
+    const spyOpenAlert = spyOn(fixture.componentInstance, 'openAlert');
+
+    stockService.getAllStockProducts.and.returnValue(of([]));
+    fixture.detectChanges();
+
+    let saleBtn = fixture.debugElement.nativeElement.querySelector('#saleBtn');
+    saleBtn.click();
+
+    tick();
+    
+    expect(spyOpenAlert).toHaveBeenCalledTimes(1);
+  }));
+
+  it('should not show alert if products selected', fakeAsync(() => {    
+    const spyOpenAlert = spyOn(fixture.componentInstance, 'openAlert');
+
+    const product: Product = {
+      name: 'Test',
+      description: '',
+      price: 0,
+      tax: 0,
+      quantity: 0
+    }
+
+    stockService.getAllStockProducts.and.returnValue(of([product]));
+    fixture.detectChanges();
+
+    let checkboxHeader = fixture.debugElement.nativeElement.querySelector('#check-header');
+    expect(checkboxHeader.checked).toBeFalsy();
+
+    checkboxHeader.dispatchEvent(new Event('change'));
+
+    tick();
+
+    let saleBtn = fixture.debugElement.nativeElement.querySelector('#saleBtn');
+    saleBtn.click();
+    
+    expect(spyOpenAlert).toHaveBeenCalledTimes(0);
+
+    flush();
+  }));
+
+  it('should call deleteProduct if trashicon clicked', fakeAsync(() => {    
+    const spyDelete = spyOn(fixture.componentInstance, 'deleteProduct');
+
+    const product: Product = {
+      name: 'Test',
+      description: '',
+      price: 0,
+      tax: 0,
+      quantity: 0
+    }
+
+    stockService.getAllStockProducts.and.returnValue(of([product]));
+    fixture.detectChanges();
+    
+    const deleteIcon = fixture.nativeElement.querySelector('table tbody .mat-column-delete button') as HTMLButtonElement;
+    deleteIcon.click()
+    
+    expect(spyDelete).toHaveBeenCalledTimes(1);
+
+    flush();
+  }));
+
+  it('should run filter when search input has value', fakeAsync(() => {
+
+    const product1: Product = {
+      name: 'Product',
+      description: '',
+      price: 0,
+      tax: 0,
+      quantity: 0
+    }
+
+    const product2: Product = {
+      name: 'Test',
+      description: '',
+      price: 0,
+      tax: 0,
+      quantity: 0
+    }
+
+    stockService.getAllStockProducts.and.returnValue(of([product1, product2]));
+    const spyFilter = spyOn(fixture.componentInstance, 'applyFilter');
+
+    fixture.detectChanges();
+    tick();
+
+    let table = fixture.debugElement.queryAll(By.css('table tbody tr'));
+    expect(table.length).toBe(2);
+
+    let searchInput = fixture.debugElement.nativeElement.querySelector('#search-input');
+    searchInput.value = 'Te';
+    searchInput.dispatchEvent(new KeyboardEvent('keyup'));
+
+    expect(spyFilter).toHaveBeenCalledTimes(1);
   }));
 });
 
