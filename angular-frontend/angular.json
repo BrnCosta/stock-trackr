@@ -91,6 +91,7 @@
               "@angular/material/prebuilt-themes/pink-bluegrey.css",
               "src/styles.css"
             ],
+            "codeCoverage": true,
             "scripts": []
           }
         }
