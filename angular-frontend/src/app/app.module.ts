@@ -15,8 +15,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card'
 import { MatPaginatorModule } from '@angular/material/paginator'
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatCheckboxModule } from '@angular/material/checkbox'
 
 import { HttpClientModule } from '@angular/common/http';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,7 @@ import { HttpClientModule } from '@angular/common/http';
     BrowserModule, BrowserAnimationsModule, NgIf, FormsModule,
     MatTableModule, MatFormFieldModule,
     MatInputModule, MatButtonModule, MatIconModule, MatCardModule, MatPaginatorModule, MatDialogModule,
-    HttpClientModule
+    HttpClientModule, MatSnackBarModule, MatCheckboxModule
   ],
   providers: [],
   bootstrap: [AppComponent]

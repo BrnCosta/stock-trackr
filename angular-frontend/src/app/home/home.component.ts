@@ -1,29 +1,13 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { StockService } from './stock.service';
-
-export interface Product {
-  name: string;
-  description: string;
-  price: number;
-  quantity: number;
-  tax: number;
-}
-
-const STOCK_DATA: Product[] = [
-  { name: "Product", description: 'Hydrogen', price: 1.0079, quantity: 10, tax: 0.01 },
-  { name: "Product", description: 'Hydrogen', price: 1.0079, quantity: 10, tax: 0.01 },
-  { name: "Product", description: 'Hydrogen', price: 1.0079, quantity: 10, tax: 0.01 },
-  { name: "Product", description: 'Hydrogen', price: 1.0079, quantity: 10, tax: 0.01 },
-  { name: "Product", description: 'Hydrogen', price: 1.0079, quantity: 10, tax: 0.01 },
-  { name: "Product", description: 'Hydrogen', price: 1.0079, quantity: 10, tax: 0.01 },
-  { name: "Product", description: 'Hydrogen', price: 1.0079, quantity: 10, tax: 0.01 },
-  { name: "Product", description: 'Hydrogen', price: 1.0079, quantity: 10, tax: 0.01 },
-  { name: "Product", description: 'Hydrogen', price: 1.0079, quantity: 10, tax: 0.01 },
-  { name: "Product", description: 'Hydrogen', price: 1.0079, quantity: 10, tax: 0.01 },
-  { name: "Product", description: 'Hydrogen', price: 1.0079, quantity: 10, tax: 0.01 },
-  { name: "Product", description: 'Hydrogen', price: 1.0079, quantity: 10, tax: 0.01 },
-  { name: "Product", description: 'Hydrogen', price: 1.0079, quantity: 10, tax: 0.01 },
-];
+import { StockService } from '../services/stock.service';
+import { DialogAddProduct } from '../utils/dialog-add-product/dialog-add-product.component';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogConfirm } from '../utils/dialog-confirm/dialog-confirm.component';
+import { firstValueFrom } from 'rxjs/internal/firstValueFrom';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { SelectionModel } from '@angular/cdk/collections';
+import { DialogSale } from '../utils/dialog-sale/dialog-sale.component';
+import { Product } from '../interfaces/Product';
 
 @Component({
   selector: 'app-home',
@@ -34,72 +18,142 @@ const STOCK_DATA: Product[] = [
 
 export class HomeComponent implements OnInit {
 
-  constructor(private stockService: StockService, public dialog: MatDialog) { }
+  constructor(
+    private stockService: StockService,
+    private alert: MatSnackBar,
+    public dialog: MatDialog,
+  ) { }
 
   ngOnInit(): void {
     this.getAllStockProducts();
   }
 
-  displayedColumns: string[] = ['name', 'description', 'price', 'tax', 'quantity'];
+  displayedColumns: string[] = ['select', 'name', 'description', 'price', 'tax', 'quantity', 'edit', 'delete'];
+  selection = new SelectionModel<Product>(true, []);
+
+  allProducts: Product[] = [];
   products: Product[] = [];
   searchText = "";
 
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.products.length;
+    return numSelected === numRows;
+  }
+
+  toggleAllRows() {
+    if (this.isAllSelected()) {
+      this.selection.clear();
+      return;
+    }
+
+    this.selection.select(...this.products);
+  }
+
+  checkboxLabel(row?: Product): string {
+    if (!row) {
+      return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
+    }
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.name + 1}`;
+  }
+
   getAllStockProducts() {
     this.stockService.getAllStockProducts().subscribe((products: Product[]) => {
+      this.allProducts = products;
       this.products = products;
     })
   }
 
-  openDialog(): void {
+  applyFilter() {
+    this.products = this.allProducts.filter((product: Product) => product.name.toLowerCase().includes(this.searchText.toLowerCase()));
+  }
+
+  resetSearch() {
+    this.searchText = '';
+    this.applyFilter();
+  }
+
+  openAlert(text: string) {
+    this.alert.open(text, "X", {
+      duration: 3000
+    });
+  }
+
+  openSaleDialog() {
+    if (this.selection.selected.length == 0) {
+      this.openAlert("Please select at least one product...");
+      return;
+    }
+
+    const dialogRef = this.dialog.open(DialogSale, {
+      data: this.selection.selected,
+    });
+
+    dialogRef.afterClosed().subscribe({
+      next: () => this.getAllStockProducts()
+    });
+  }
+
+  deleteProduct(product: Product): void {
+    const confirmText = `Would you like to remove ${product.name} from stock?`;
+    this.openConfirmDialog('Remove product', confirmText).then(confirm => {
+      if (confirm) {
+        this.stockService.removeProduct(product).subscribe({
+          next: () => {
+            this.openAlert('Product successfully removed!');
+            this.getAllStockProducts();
+          },
+          error: (e: Error) => this.openAlert('Error removing product: ' + e)
+        });
+      }
+    }
+    );
+  }
+
+  openUpdateDialog(product: Product): void {
+    const dialogRef = this.dialog.open(DialogAddProduct, {
+      data: product,
+    });
+
+    dialogRef.afterClosed().subscribe((result: Product | undefined) => {
+      if (result == undefined)
+        return;
+
+      this.stockService.updateProduct(result)
+        .subscribe({
+          next: () => {
+            this.openAlert('Product successfully updated!');
+            this.getAllStockProducts();
+          },
+          error: (e: Error) => this.openAlert('Error updating product: ' + e)
+        });
+    });
+  }
+
+  openAddDialog(): void {
     const dialogRef = this.dialog.open(DialogAddProduct);
 
-    dialogRef.afterClosed().subscribe(result => {
-      if(result == undefined)
+    dialogRef.afterClosed().subscribe((result: Product | undefined) => {
+      if (result == undefined)
         return;
-      
+
       this.stockService.addProduct(result)
         .subscribe({
           next: (product: Product) => {
-            console.log('Successfully added product: ' + product.name);
-            this.products = [...this.products, product];
+            this.openAlert('Successfully added product: ' + product.name);
+            this.getAllStockProducts();
           },
-          error: (e: Error) => console.error('Error adding product: ' + e)
-        })
+          error: (e: Error) => this.openAlert('Error adding product: ' + e)
+        });
     });
   }
-}
 
-import { MatDialogRef, MatDialogModule, MatDialog } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
-import { FormControl, FormsModule, ReactiveFormsModule, FormGroup, Validators } from '@angular/forms';
-import { NgIf } from '@angular/common';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
+  async openConfirmDialog(title: string, text: string): Promise<boolean> {
+    const dialogRef = this.dialog.open(DialogConfirm, {
+      data: { title, text },
+    });
 
-@Component({
-  selector: 'dialog-add-product',
-  templateUrl: 'dialog-add-product.html',
-  standalone: true,
-  imports: [MatDialogModule, MatFormFieldModule, MatInputModule, FormsModule, MatButtonModule, ReactiveFormsModule, NgIf],
-})
-export class DialogAddProduct {
-  constructor(
-    public dialogRef: MatDialogRef<DialogAddProduct>
-  ) { }
-
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
-
-  productForm = new FormGroup({
-    name: new FormControl('', Validators.required),
-    description: new FormControl(''),
-    price: new FormControl('', [Validators.required, Validators.min(1)]),
-    tax: new FormControl('', [Validators.required, Validators.min(0)]),
-    quantity: new FormControl(0, [Validators.required, Validators.min(0)])
-  });
-
-  onSubmit() {
-    this.dialogRef.close(this.productForm.value);
+    var result = await firstValueFrom(dialogRef.afterClosed());
+    return result;
   }
 }

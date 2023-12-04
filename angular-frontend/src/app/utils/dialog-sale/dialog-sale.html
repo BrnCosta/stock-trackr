@@ -1,0 +1,46 @@
+<h1 mat-dialog-title id="dialogTitle">New sale</h1>
+<div mat-dialog-content class="form-class">
+    <form id="mySaleForm" [formGroup]="saleForm">
+        <div [formArrayName]="'formArrayName'">
+            <div *ngFor="let x of products; let i = index" style="margin-bottom: 20px;">
+                <div [formGroupName]="i">
+                    <mat-form-field style="width: 30%;">
+                        <mat-label>Product</mat-label>
+                        <input formControlName="name" matInput id="{{x.name}}" value="{{x.name}}" readonly="true" />
+                    </mat-form-field>
+                    <mat-form-field style="width: 30%;">
+                        <mat-label>Price</mat-label>
+                        <input formControlName="price" matInput id="{{x.price}}" value="{{x.price}}" readonly="true" />
+                    </mat-form-field>
+                    <mat-form-field style="width: 30%;">
+                        <mat-label>Quantity</mat-label>
+                        <input formControlName="quantity" (input)="updateAmount()" matInput id="{{x.quantity}}"
+                            type="number" value="{{x.quantity}}" />
+                    </mat-form-field>
+                </div>
+            </div>
+            <div>
+                <label id="payment-type-group-label">Payment type:</label>
+                <mat-radio-group aria-labelledby="payment-type-group-label" class="payment-type-group"
+                    [(ngModel)]="paymentType" [ngModelOptions]="{standalone: true}">
+                    <mat-radio-button value="0">Credit Card</mat-radio-button>
+                    <mat-radio-button value="1">Cash</mat-radio-button>
+                    <mat-form-field *ngIf="paymentType == 1" style="width: 30%;">
+                        <mat-label>Amount</mat-label>
+                        <input matInput type="number" [(ngModel)]="cashAmount" [ngModelOptions]="{standalone: true}"
+                            placeholder="Ex. 50.00">
+                    </mat-form-field>
+                    <mat-radio-button value="2">Pix</mat-radio-button>
+                </mat-radio-group>
+            </div>
+            <div>
+                <mat-label>Total: $ {{ totalAmount.toFixed(2) }}</mat-label>
+            </div>
+            <div mat-dialog-actions align="end">
+                <button id="cancelBtn" mat-button mat-raised-button color="basic" (click)="onNoClick()">Cancel</button>
+                <button id="saveBtn" mat-button mat-raised-button color="primary"
+                    [disabled]="paymentType == 1 && cashAmount == 0" (click)="onSubmit()">Confirm</button>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, fakeAsync, flush, tick } from '@angular/core/testing';
 
 import { HomeComponent, Product } from './home.component';
-import { StockService } from './stock.service';
+import { StockService } from '../services/stock.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -53,8 +53,8 @@ describe('HomeComponent', () => {
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('.container h1')?.textContent)
-    .toContain('Stock Trackr');
-  })  
+      .toContain('Stock Trackr');
+  })
 
   it('should have a button to add a Product', () => {
     stockService.getAllStockProducts.and.returnValue(of([]));
@@ -63,56 +63,56 @@ describe('HomeComponent', () => {
 
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('#productBtn')?.textContent)
-    .toContain('Add Product');
-  })    
+      .toContain('Add Product');
+  })
 
-  it('should have called getAllStockProducts at the beggining', fakeAsync(() => {    
+  it('should have called getAllStockProducts at the beggining', fakeAsync(() => {
     const spyAllStockProduct = spyOn(fixture.componentInstance, 'getAllStockProducts');
     stockService.getAllStockProducts.and.returnValue(of([]));
 
     fixture.detectChanges();
 
     tick();
-  
+
     expect(spyAllStockProduct).toHaveBeenCalledTimes(1);
   }))
 
   it('should trigger open modal when addProduct clicked', fakeAsync(() => {
-    const spyOpenDialog = spyOn(fixture.componentInstance, 'openDialog');
+    const spyOpenDialog = spyOn(fixture.componentInstance, 'openAddDialog');
 
     stockService.getAllStockProducts.and.returnValue(of([]));
-  
+
     fixture.detectChanges();
-  
+
     let addProduct = fixture.debugElement.nativeElement.querySelector('#productBtn');
     addProduct.click();
-  
+
     tick();
-  
+
     expect(spyOpenDialog).toHaveBeenCalledTimes(1);
   }));
 
   it('should display headers in table', fakeAsync(() => {
 
     stockService.getAllStockProducts.and.returnValue(of([]));
-  
+
     fixture.detectChanges();
-    
+
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('table thead .mat-column-name')?.textContent)
-    .toContain(' Name ');
-    
+      .toContain(' Name ');
+
     expect(compiled.querySelector('table thead .mat-column-description')?.textContent)
-    .toContain(' Description ');
-    
+      .toContain(' Description ');
+
     expect(compiled.querySelector('table thead .mat-column-price')?.textContent)
-    .toContain(' Price ');
-    
+      .toContain(' Price ');
+
     expect(compiled.querySelector('table thead .mat-column-tax')?.textContent)
-    .toContain(' Tax ');
-    
+      .toContain(' Tax ');
+
     expect(compiled.querySelector('table thead .mat-column-quantity')?.textContent)
-    .toContain(' Quantity ');
+      .toContain(' Quantity ');
   }));
 
   it('should display product in table', fakeAsync(() => {
@@ -125,38 +125,38 @@ describe('HomeComponent', () => {
     }
 
     stockService.getAllStockProducts.and.returnValue(of([product]));
-  
+
     fixture.detectChanges();
-    
+
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('table tbody .mat-column-name')?.textContent)
-    .toContain('Test');
-  }));  
+      .toContain('Test');
+  }));
 
   it('should show title when modal is opened', fakeAsync(() => {
     stockService.getAllStockProducts.and.returnValue(of([]));
-  
+
     fixture.detectChanges();
-  
+
     let addProduct = fixture.debugElement.nativeElement.querySelector('#productBtn');
     addProduct.click();
-    
+
     fixture.whenStable().then(() => {
       const h1InDialog = document.querySelector('#dialogTitle');
       expect(h1InDialog?.textContent).toBe('New product');
     });
 
     flush();
-  }));  
+  }));
 
   it('should show save button when modal is opened', fakeAsync(() => {
     stockService.getAllStockProducts.and.returnValue(of([]));
-  
+
     fixture.detectChanges();
-  
+
     let addProduct = fixture.debugElement.nativeElement.querySelector('#productBtn');
     addProduct.click();
-    
+
     fixture.whenStable().then(() => {
       const cancelDialog = document.querySelector('#cancelBtn');
       expect(cancelDialog?.textContent).toBe('Cancel');

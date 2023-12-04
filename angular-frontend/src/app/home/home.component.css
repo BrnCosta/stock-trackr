@@ -28,3 +28,48 @@
     flex: 0.5;
     margin-left: 10px;
 }
+
+.mat-column-name {
+    width: 25%;
+}
+
+.mat-column-description {
+    width: 35%;
+}
+
+.mat-column-price,
+.mat-header-price {
+    width: 10%;
+    text-align: center !important;
+}
+
+.mat-column-tax,
+.mat-header-tax {
+    width: 10%;
+    text-align: center !important;
+}
+
+.mat-column-quantity,
+.mat-header-quantity {
+    width: 10%;
+    text-align: center !important;
+}
+
+.mat-column-delete {
+    width: 5%;
+}
+
+.mat-column-edit {
+    width: 5%;
+}
+
+.green-snackbar {
+    --mdc-snackbar-container-color: rgb(1, 165, 1);
+    --mdc-button-color: white;
+}
+
+.mat-snack-bar-container {
+    color: rgba(255, 255, 255, .7);
+    background: #ff0000;
+    box-shadow: 0 3px 5px -1px rgba(0, 0, 0, .2), 0 6px 10px 0 rgba(0, 0, 0, .14), 0 1px 18px 0 rgba(0, 0, 0, .12);
+}
