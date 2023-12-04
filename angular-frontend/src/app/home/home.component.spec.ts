@@ -18,6 +18,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { Product } from '../interfaces/Product';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 describe('HomeComponent', () => {
   let component: HomeComponent;
@@ -35,7 +36,7 @@ describe('HomeComponent', () => {
         BrowserModule, BrowserAnimationsModule, NgIf, FormsModule,
         MatTableModule, MatFormFieldModule, MatInputModule, MatButtonModule,
         MatIconModule, MatCardModule, MatPaginatorModule, MatDialogModule,
-        HttpClientModule],
+        HttpClientModule, MatCheckboxModule],
       providers: [
         { provide: StockService, useValue: stockService },
         MatDialog,
