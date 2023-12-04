@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, fakeAsync, flush, tick } from '@angular/core/testing';
 
-import { HomeComponent, Product } from './home.component';
+import { HomeComponent } from './home.component';
 import { StockService } from '../services/stock.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
@@ -16,6 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { HttpClientModule } from '@angular/common/http';
 import { MatCardModule } from '@angular/material/card';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { Product } from '../interfaces/Product';
 
 describe('HomeComponent', () => {
   let component: HomeComponent;
